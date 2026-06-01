@@ -1,43 +1,95 @@
-# Svelte + Vite
+# Box Box - Live F1 Minimap & Telemetry Dashboard
 
-This template should help get you started developing with Svelte in Vite.
+**Box Box** is a real-time Formula 1 dashboard that visualizes live session telemetry and reconstructs actual track layouts using raw location coordinate feeds from the open-source **OpenF1 API**. 
 
-## Recommended IDE Setup
+Built using **Svelte 5 (Runes)** for high-performance 60fps UI rendering and **Tailwind CSS v4** for modern, glassmorphic dark-mode aesthetics.
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+---
 
-## Need an official Svelte framework?
+## Key Features
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+* **Dynamic Track Reconstruction:** Dynamically parses 3D Cartesian coordinates (`x`, `y`) from a single driver's lap to draw any F1 circuit perfectly as scalable vector graphics (SVG).
+* **Live Driver Minimap Tracker:** Animates all active driver dots moving smoothly around the vector circuit layout in real-time.
+* **60fps Interpolation Loop:** Employs Linear Interpolation (Lerp) to smooth out driver coordinate signals (~3.7 Hz API sampling rate) for lag-free, fluid motion.
+* **Active Telemetry HUD:** Click any driver to load real-time car metrics including current Speed (km/h), engine RPM, Gear Selection, Throttle, and Brake inputs.
+* **Session Picker:** Explore active and historical sessions directly from the official OpenF1 session registry.
 
-## Technical considerations
+---
 
-**Why use this over SvelteKit?**
+## Technology Stack
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+* **Frontend Framework:** [Svelte 5](https://svelte.dev/) (utilizing modern reactive `$state`, `$derived`, and `$effect` runes)
+* **Build System:** [Vite 8](https://vite.dev/)
+* **CSS Framework:** [Tailwind CSS v4](https://tailwindcss.com/) (CSS-first engine)
+* **Data Provider:** [OpenF1 REST API](https://openf1.org/) (CORS-enabled public endpoint)
 
-This template contains as little as possible to get started with Vite + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+---
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+## Technical & Mathematical Implementation
 
-**Why include `.vscode/extensions.json`?**
+### 1. Circuit Vector Mapping (Scaling & Translation)
+Formula 1 cars transmit their location coordinates in a Cartesian system ($x, y, z$) representing decimeter/meter offsets from a track-specific origin. To translate these arbitrary values onto a scalable web browser SVG canvas:
 
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
+1. Let $\mathbf{P} = \{(x_1, y_1), (x_2, y_2), ..., (x_n, y_n)\}$ be the set of coordinates representing a single completed lap.
+2. Find the bounding box boundaries:
+   $$X_{min} = \min(X), \quad X_{max} = \max(X)$$
+   $$Y_{min} = \min(Y), \quad Y_{max} = \max(Y)$$
+3. Compute the viewport width ($W$) and height ($H$):
+   $$W = X_{max} - X_{min}, \quad H = Y_{max} - Y_{min}$$
+4. Calculate the scaled coordinates to draw the SVG vector path:
+   $$\text{Screen } X = x_i - X_{min}$$
+   $$\text{Screen } Y = Y_{max} - y_i$$
+   *(Note: The $Y$ coordinate is inverted because SVG vertical space increases downwards, whereas track coordinates increase upwards).*
 
-**Why enable `checkJs` in the JS template?**
+### 2. Smooth Linear Interpolation (Lerp)
+To prevent the driver indicators from jumping or stuttering between the API's $3.7\text{ Hz}$ update ticks:
+* We track the driver's current screen position $\mathbf{P}_{current}$ and their incoming target position $\mathbf{P}_{target}$.
+* On every screen redraw (`requestAnimationFrame` at 60fps), we calculate the next transition step:
+  $$\mathbf{P}_{current} = \mathbf{P}_{current} + (\mathbf{P}_{target} - \mathbf{P}_{current}) \times \alpha$$
+  *(where $\alpha \approx 0.1$ behaves as a smooth easing coefficient).*
 
-It is likely that most cases of changing variable types in runtime are likely to be accidental, rather than deliberate. This provides advanced typechecking out of the box. Should you like to take advantage of the dynamically-typed nature of JavaScript, it is trivial to change the configuration.
+---
 
-**Why is HMR not preserving my local component state?**
+## Getting Started
 
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/sveltejs/svelte-hmr/tree/master/packages/svelte-hmr#preservation-of-local-state).
+### Prerequisites
+Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
 
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
+### Installation & Setup
 
-```js
-// store.js
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+1. **Clone or Navigate to the Directory:**
+   ```bash
+   cd BoxBox
+   ```
+
+2. **Install Node Packages:**
+   ```bash
+   npm install
+   ```
+
+3. **Boot up the Local Development Server:**
+   ```bash
+   npm run dev
+   ```
+
+4. Open the development link shown in your terminal (typically `http://localhost:5173`) inside your web browser.
+
+---
+
+## Project Architecture
+
+```
+BoxBox/
+├── src/
+│   ├── assets/           # Dynamic icons, team badges, SVGs
+│   ├── components/       # Custom modular components
+│   │   ├── TrackMap.svelte      # Canvas/SVG layout drawer
+│   │   ├── TelemetryHUD.svelte  # Speedometer and telemetry gauges
+│   │   └── Leaderboard.svelte   # Live driver list & gaps
+│   ├── App.svelte        # Main layout, orchestrates global states
+│   ├── app.css           # Tailwind v4 import entry
+│   └── main.js           # Mounts the Svelte 5 application
+├── index.html            # Main HTML document template
+├── vite.config.js        # Vite build configurations with Tailwind v4
+└── package.json          # Node scripts and dependencies
 ```
