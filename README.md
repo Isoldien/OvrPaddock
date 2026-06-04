@@ -15,7 +15,7 @@ To recreate this project with the same configuration:
 
 ```sh
 # recreate this project
-npx sv@0.15.3 create --template minimal --types ts --add eslint tailwindcss="plugins:typography,forms" vitest="usages:unit,component" playwright sveltekit-adapter="adapter:auto" drizzle="database:sqlite+sqlite:better-sqlite3" better-auth="demo:password" mdsvex storybook --install npm OvrPaddock
+npx sv@0.15.4 create --template minimal --types ts --install npm OvrPaddock
 ```
 
 ## Developing
