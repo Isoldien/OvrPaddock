@@ -1,9 +1,9 @@
 <script lang="ts">
-	import Header from "../lib/components/Header.svelte";
+	import Navbar from "../lib/components/Navbar.svelte";
 	let { children } = $props();
 	import "../app.css";
 </script>
 
-<Header />
-
-{@render children()}
+<main class="bg-black">
+	{@render children()}
+</main>
