@@ -1,6 +1,7 @@
 <script lang="ts">
     import { Canvas } from "@threlte/core";
     import Scene from "./_scene.svelte";
+    import githubIcon from "$lib/assets/github.svg";
 </script>
 
 <main
@@ -30,10 +31,11 @@
             <a href="https://github.com/Isoldien/OvrPaddock">
                 <img
                     class="w-5"
-                    src="src/lib/assets/github.svg"
+                    src={githubIcon}
                     alt="Github Icon"
                 />
             </a>
         </div>
     </div>
 </main>
+
