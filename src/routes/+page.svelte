@@ -1,5 +1,5 @@
 <script lang="ts">
-    import githubIcon from "$lib/assets/github.svg";
+
 
     let observer: IntersectionObserver;
     /* @TODO Add this to +layout.svelte for global scroll reveal */
@@ -50,16 +50,13 @@
         class="min-h-screen flex flex-col items-center justify-center w-full"
     >
         <h1
-            class="text-7xl font-tourney font-bold tracking-tight bg-gradient-to-r from-gray-50 to-slate-600 bg-clip-text text-transparent"
+            class="text-7xl font-tourney font-bold tracking-tight bg-linear-to-r from-gray-50 to-slate-600 bg-clip-text text-transparent"
         >
             OvrPaddock
         </h1>
-
-        <div class="mt-4">
-            <p class="text-1xs font-spacemono max-w-md text-center text-white">
-                By <strong>Isoldien</strong>
-            </p>
-        </div>
+        <h2 class="text-4xl font-spacemono text-gray-500 mt-4">
+            ↓
+        </h2>
     </section>
 
     <section
@@ -72,36 +69,14 @@
             </h2>
         </div>
         <div>
-            <p class="text-white text-lg leading-relaxed font-spacemono">
-                OvrPaddock is all-in-one F1 tracker. The name comes from <em
-                    >Ovr</em
-                >
-                from many sports games signifying their <em>Overall</em> rating
-                and <em>Paddock</em> is essentially the heart of F1.
-            </p>
-            <br />
-            <p class="text-white text-lg leading-relaxed font-spacemono">
-                By combining the two, we have <strong>OvrPaddock</strong> which
-                could mean Overall Paddock, meaning
-                <strong>"in general"</strong>
-                so general news about F1 or Over [the] Paddock which means a literal
-                <strong>birdseye view</strong> of the track. <br /><br />
-                Either one you choose, I hope that it provides the information you
-                require.
-            </p>
+            <p class="text-1xs font-spacemono text-white">
+                OvrPaddock is a tool designed to allow users to watch replays or live races in a unique way, by providing a 3D environment where users can see a isometric view of the track and the cars.  
         </div>
-    </section>
-
-    <div
-        class="fixed bottom-6 flex flex-col items-center w-full pointer-events-none"
-    >
-        <div class="pointer-events-auto">
-            <a
-                href="https://github.com/Isoldien/OvrPaddock"
-                class="transition hover:opacity-75"
-            >
-                <img class="w-5" src={githubIcon} alt="Github Icon" />
-            </a>
+        <div class="mt-6">
+            <button
+                class="mt-6 px-4 py-2 bg-black outline-1 text-white transition font-spacemono rounded-sm"
+                onclick={() => (window.location.href = "/dashboard")}
+                >Continue</button>
         </div>
-    </div>
+    </section> 
 </main>
